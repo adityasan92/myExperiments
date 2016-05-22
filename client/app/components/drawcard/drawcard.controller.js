@@ -1,6 +1,7 @@
 class DrawcardController {
 
-  constructor() {
+  constructor($http) {
+    this.$http = $http;
     this.name = 'drawcard';
     var canvas = document.getElementById("canvas");
     if(canvas){
@@ -43,7 +44,37 @@ class DrawcardController {
     var canvas = document.getElementById("canvas");
     var image = new Image();
     image.src = canvas.toDataURL("image/png");
-    console.log(image);
+    var file = this.dataURItoBlob(image.src);
+    var fd = new FormData();
+    fd.append("file", file);
+    this.$http({
+        method:'POST',
+        url: 'http://localhost:5000',
+        headers: { 'Content-Type': undefined},
+        data: fd
+    }).success(function(err, data){
+        console.log(err);
+        console.log(data);
+    }).error(function(err){
+        console.log(err);
+    });
+  }
+
+  dataURItoBlob(dataURI) {
+      // convert base64/URLEncoded data component to raw binary data held in a string
+      var byteString;
+      if (dataURI.split(',')[0].indexOf('base64') >= 0)
+          byteString = atob(dataURI.split(',')[1]);
+      else
+          byteString = unescape(dataURI.split(',')[1]);
+      // separate out the mime component
+      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      // write the bytes of the string to a typed array
+      var ia = new Uint8Array(byteString.length);
+      for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ia], {type:mimeString});
   }
 
   clear(){
@@ -53,4 +84,5 @@ class DrawcardController {
   }
 }
 
+DrawcardController.$inject = ['$http'];
 export default DrawcardController;
