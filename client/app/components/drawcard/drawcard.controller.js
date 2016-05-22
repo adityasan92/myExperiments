@@ -2,7 +2,6 @@ class DrawcardController {
   constructor() {
     this.name = 'drawcard';
     var canvas = document.getElementById("canvas");
-    console.log(canvas);
     if(canvas){
       this.attachListeners(canvas);
     }
@@ -37,7 +36,14 @@ class DrawcardController {
          isDown = false;
          ctx.closePath();
      });
- }
+  }
+
+  predict(){
+    var canvas = document.getElementById("canvas");
+    var image = new Image();
+    image.src = canvas.toDataURL("image/png");
+    console.log(image);
+  }
 
 }
 
