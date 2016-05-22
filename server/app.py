@@ -1,6 +1,8 @@
 import os
 import logging
 import sys
+import PIL
+from PIL import Image
 from flask import Flask, request
 from pprint import pprint
 from werkzeug import secure_filename, FileStorage
@@ -22,6 +24,12 @@ def upload_file():
         #sys.stderr.write(request.files['file'])
         print >> sys.stderr, vars( request.files['file'])
         FileStorage(stream=request.files['file']).save(os.path.join(app.config['UPLOAD_FOLDER'],'testpic.jpg'))
+        img = Image.open(os.path.join(app.config['UPLOAD_FOLDER'],'testpic.jpg'))
+        basewidth = 28
+        wpercent = (basewidth/float(img.size[0]))
+        hsize = int((float(img.size[1])*float(wpercent)))
+        img = img.resize((basewidth,hsize), PIL.Image.ANTIALIAS)
+        img.save('sompic.png')
         return "success"
 
 
