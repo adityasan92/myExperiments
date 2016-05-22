@@ -1,4 +1,5 @@
 class DrawcardController {
+
   constructor() {
     this.name = 'drawcard';
     var canvas = document.getElementById("canvas");
