@@ -41,9 +41,31 @@ class DrawcardController {
   }
 
   predict(){
-    var canvas = document.getElementById("canvas");
+    var c = document.getElementById("canvas");
     var image = new Image();
-    image.src = canvas.toDataURL("image/png");
+    var ctx = canvas.getContext("2d");
+    var idataSrc = ctx.getImageData(0, 0, c.width, c.height), // original
+          idataTrg = ctx.createImageData(c.width, c.height),    // empty data
+          dataSrc = idataSrc.data,                              // reference the data itself
+          dataTrg = idataTrg.data,
+          len = dataSrc.length, i = 0, luma;
+
+          // convert by iterating over each pixel each representing RGBA
+        for(; i < len; i += 4) {
+          // calculate luma, here using rec601
+          luma = dataSrc[i] * 0.299 + dataSrc[i+1] * 0.587 + dataSrc[i+2] * 0.114;
+
+          // update target's RGB using the same luma value for all channels
+          dataTrg[i] = dataTrg[i+1] = dataTrg[i+2] = luma;
+          dataTrg[i+3] = dataSrc[i+3];                            // copy alpha
+        }
+
+        // put back luma data so we can save it as image
+        ctx.putImageData(idataTrg, 0, 0);
+
+
+
+    image.src = c.toDataURL("image/PNG");
     var file = this.dataURItoBlob(image.src);
     var fd = new FormData();
     fd.append("file", file);
