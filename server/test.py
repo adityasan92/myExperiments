@@ -18,14 +18,21 @@ from PIL import Image
 jpg = PIL.Image.open("./sompic.jpg")
 
 arr = np.array(jpg)
+arr = np.reshape(arr,(784,1))
+arr = np.asfarray(arr, dtype='float32')
 arr = arr - 255
-arr = -1* np.array(arr)
+arr = arr * -1
+arr = arr/255
+arr = arr + 0.00000000001
+print arr
+# arr = -1*np.array(arr)
+arr = np.reshape(arr,(28,28))
+arr = 255*np.array(arr)
 arr = np.uint8(arr)
 img = Image.fromarray(arr)
 img.save('random.jpg')
 
 # print arr
-print arr[1]
 # arr = np.array(background)
 # print arr
 #background.save('foo.jpg', 'JPEG', quality=80)
